@@ -17,6 +17,116 @@
 
 ---
 
+<a id="目录"></a>
+
+## 📋 目录
+
+- [🚀 快速开始：从下载到第一次筛选](#快速开始)
+- [💡 项目介绍](#项目介绍)
+- [✨ 功能特性](#功能特性)
+- [📸 效果展示](#效果展示)
+- [🧭 处理流程与评分维度](#处理流程)
+- [🛠️ 技术栈](#技术栈)
+- [🖥️ 使用方式](#使用方式)
+- [💰 模型调用与费用](#模型调用与费用)
+- [📂 项目结构](#项目结构)
+- [🔌 常用 API](#常用-api)
+- [🧪 测试](#测试)
+- [❓ 常见问题](#常见问题)
+- [🔐 数据管理与公开仓库说明](#数据管理与公开仓库说明)
+- [📚 项目材料](#项目材料)
+- [🗺️ 后续计划](#后续计划)
+- [🙏 项目来源与致谢](#项目来源与致谢)
+
+---
+
+<a id="快速开始"></a>
+
+## 🚀 快速开始
+
+**目标：下载项目 → 安装依赖 → 填写密钥 → 打开页面 → 完成第一次筛选。**
+
+> 已经安装并配置过？直接打开 `D:\Resume-Assistant`，双击 `Start.cmd`，再访问 [工作台](http://127.0.0.1:8000/ui/)。首次使用请按下面的步骤操作。
+
+### ① 准备好两样东西
+
+- **Python 3.12**：安装时勾选“Add Python to PATH”，在 PowerShell 输入 `python --version` 确认可以使用。
+- **智谱 API Key**：账号需可调用 `glm-5.3-flash` 和 `embedding-3`，且有可用额度。这两个模型按调用用量计费。
+
+当前默认使用本地 ChromaDB，无需另外安装数据库服务，也无需单独安装前端依赖。
+
+### ② 下载并安装
+
+安装了 Git 的用户，在 PowerShell 依次执行：
+
+```powershell
+cd D:\
+git clone https://github.com/PUREGIT1028/Resume-Assistant.git
+cd D:\Resume-Assistant
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-local.txt
+Copy-Item .env.example .env
+```
+
+没有 Git？在仓库页面点击 **Code → Download ZIP**，解压并将包含 `README.md`、`app` 和 `Start.cmd` 的项目根目录命名为 `D:\Resume-Assistant`。在该目录打开 PowerShell，从上面 `python -m venv .venv` 这一行开始执行。
+
+> 依赖安装耗时取决于网络，等待安装完成再继续。已有 `.env` 时不要再次复制覆盖，直接编辑现有文件。
+
+### ③ 填写自己的密钥
+
+在项目目录执行：
+
+```powershell
+notepad .env
+```
+
+找到下面两行，将占位内容替换为自己的智谱 API Key，然后保存文件：
+
+```dotenv
+LLM_API_KEY=你的智谱APIKey
+EMBEDDING_API_KEY=你的智谱APIKey
+```
+
+同一把密钥具备两个模型权限时，可以在两处填写相同的值。其余参数先保留模板默认值，即 `glm-5.3-flash` + `embedding-3`。不要将填写后的 `.env` 上传 GitHub。
+
+### ④ 启动并打开页面
+
+仍在 `D:\Resume-Assistant` 下执行：
+
+```powershell
+.\.venv\Scripts\python.exe -m uvicorn local_app:app --host 127.0.0.1 --port 8000
+```
+
+看到服务启动成功后，打开 **[http://127.0.0.1:8000/ui/](http://127.0.0.1:8000/ui/)**。
+
+使用这条命令启动时请保留 PowerShell 窗口，关闭窗口会停止服务；按 `Ctrl+C` 可以主动停止。以后也可以在项目目录双击 `Start.cmd` 启动，使用 `Stop.cmd` 停止。
+
+### ⑤ 完成第一次筛选
+
+1. 在网页选择 `sample_resumes/demo_ai_product.md` 和 `sample_resumes/demo_backend.md`，点击上传并等待解析完成。这两份是虚构演示简历。
+2. 在岗位需求框输入：
+
+   > 寻找 AI 产品方向候选人，了解 RAG、Python 和需求分析，有相关项目经验优先。
+
+3. 点击 **开始智能筛选**，等待后台进度完成。
+4. 查看候选人排序、技能标签、待核实条件及详细分析。模型报告失败时，系统会提供明确标注的本地规则分析。
+
+**页面能打开、示例上传成功、筛选结果可查看，就完成首次使用。** 上传和筛选会调用模型，请勿连续重复提交；历史记录可直接查看已有结果。
+
+### 遇到问题先看这里
+
+| 现象 | 优先检查 |
+| --- | --- |
+| `python` 命令无法识别 | 是否安装 Python 并添加到 PATH，安装后重新打开 PowerShell |
+| 依赖安装失败 | 网络是否正常、当前是否位于项目根目录，以及 Python 是否为建议版本 |
+| 页面提示“拒绝连接” | 启动命令是否仍在运行，访问端口是否为 `8000` |
+| 模型鉴权失败或额度不足 | `.env` 中两处密钥、账号模型权限、余额及网络连接 |
+| 上传后没有提取到文字 | 改用文字版 PDF 或 UTF-8 编码的 TXT / MD；当前未集成扫描件 OCR |
+
+接口文档：[http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)。更多参数见 [`.env.example`](.env.example)，更多操作见 [本地使用说明](本地使用说明.md)。
+
+**运行范围：Windows、本机单进程。** PDF 文字重建版使用 Windows 中文字体；其他操作系统需要调整字体路径并重新验证。
+
 <a id="项目介绍"></a>
 
 ## 💡 项目介绍
@@ -119,66 +229,6 @@ flowchart TD
 | 业务持久化 | SQLite：保存简历、岗位、任务、结果、回收站与用量 |
 | 文档处理 | pypdf 读取文字版 PDF；ReportLab 生成文字重建版 PDF |
 | 前端 | HTML、CSS、JavaScript：无需单独构建前端工程 |
-
-<a id="快速开始"></a>
-
-## 🚀 快速开始
-
-### 1. 准备环境
-
-当前本地验证环境为 **Windows + Python 3.12**。首次使用需要可以访问智谱服务的网络环境，以及已开通对应模型权限的 API Key。
-
-在 PowerShell 中克隆仓库并准备环境：
-
-```powershell
-git clone https://github.com/PUREGIT1028/Resume-Assistant.git
-cd Resume-Assistant
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements-local.txt
-Copy-Item .env.example .env
-```
-
-已有 `.env` 时请直接编辑，避免覆盖现有配置。
-
-### 2. 配置模型
-
-编辑 `.env`，填写自己的密钥：
-
-```dotenv
-# 对话与分析模型
-LLM_API_KEY=your-api-key
-LLM_BASE_URL=https://open.bigmodel.cn/api/paas/v4/
-LLM_MODEL=glm-5.3-flash
-LLM_TEMPERATURE=1.0
-
-# 文本向量模型
-EMBEDDING_API_KEY=your-api-key
-EMBEDDING_BASE_URL=https://open.bigmodel.cn/api/paas/v4/
-EMBEDDING_MODEL=embedding-3
-EMBEDDING_DIMENSIONS=2048
-
-# 本地向量数据库
-VECTOR_DB=chroma
-CHROMA_PERSIST_DIR=./chroma_db
-```
-
-两个模型可以填写同一个智谱账号下、具备相应权限的密钥。更多参数见 [`.env.example`](.env.example)。页面会显示当前运行服务使用的模型型号。
-
-### 3. 启动服务
-
-```powershell
-.\.venv\Scripts\python.exe -m uvicorn local_app:app --host 127.0.0.1 --port 8000
-```
-
-| 入口 | 地址 |
-| --- | --- |
-| 工作台 | http://127.0.0.1:8000/ui/ |
-| 交互式 API 文档 | http://127.0.0.1:8000/docs |
-| 服务健康检查 | http://127.0.0.1:8000/api/v1/health |
-
-完成环境安装后，Windows 用户也可以使用 `Start.cmd` 启动、`Stop.cmd` 停止；`Configure.cmd` 用于输入智谱密钥并重启服务。
-
-**请从项目根目录启动，使用单个服务进程。** 当前 PDF 导出使用 Windows 自带的黑体字体；迁移至其他操作系统时，需要调整 [`app/core/pdf_export.py`](app/core/pdf_export.py) 中的中文字体路径。
 
 <a id="使用方式"></a>
 
