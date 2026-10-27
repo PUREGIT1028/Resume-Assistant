@@ -135,9 +135,7 @@ EMBEDDING_API_KEY=你的智谱APIKey
 
 例如：
 
-> 寻找一位有 3 年以上经验的 Python 后端工程师，熟悉 FastAPI 和 SQL，本科及以上，可在北京工作。有 Docker 实践经验优先。
-
-本项目基于 [LLM-Agent-Resume](https://github.com/liangdabiao/LLM-Agent-Resume) 二次开发，在原有筛选流程上，完善了工作台界面、数据持久化、后台任务、历史记录、简历原件管理和回收站等功能。
+> 寻找一位2027年毕业的产品经理，熟悉 FastAPI 和 SQL，本科及以上，计算机相关专业，可在北京工作。有相关项目经验者优先。
 
 **项目定制与维护：PURE1028。**
 
